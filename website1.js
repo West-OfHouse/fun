@@ -1,29 +1,48 @@
 let paddleLeft = {
-	body: document.getElementById("left"),
+
+	body:
+		document.getElementById("left"),
+
 	y: 37,
+
 	height: 26,
-	speed: 1.05
+
+	speed: 1.05,
+
+	pointerId: null
 };
 
 
 let paddleRight = {
-	body: document.getElementById("right"),
+
+	body:
+		document.getElementById("right"),
+
 	y: 37,
+
 	height: 26,
-	speed: 1.05
+
+	speed: 1.05,
+
+	pointerId: null
 };
 
 
 let ball = {
-	body: document.getElementById("ball"),
+
+	body:
+		document.getElementById("ball"),
 
 	x: 50,
+
 	y: 50,
 
 	speedX: 0,
+
 	speedY: 0,
 
 	startSpeedX: 0.45,
+
 	maxSpeedX: 1.2
 };
 
@@ -31,13 +50,17 @@ let ball = {
 // SCORE
 
 let leftScore = 0;
+
 let rightScore = 0;
+
 
 let leftScoreText =
 	document.getElementById("leftScore");
 
+
 let rightScoreText =
 	document.getElementById("rightScore");
+
 
 let countdownText =
 	document.getElementById("countdown");
@@ -51,54 +74,16 @@ let roundActive = false;
 // AUDIO
 
 let paddleSounds = [
+
 	"audio1.m4a",
+
 	"audio2.m4a",
+
 	"audio3.m4a",
+
 	"audio4.m4a"
+
 ];
-
-let audioUnlocked = false;
-
-
-function unlockAudio() {
-
-	if (audioUnlocked) {
-		return;
-	}
-
-	let sound =
-		new Audio(paddleSounds[0]);
-
-	sound.volume = 0;
-
-	sound.play()
-		.then(function() {
-
-			sound.pause();
-
-			sound.currentTime = 0;
-
-			audioUnlocked = true;
-		})
-		.catch(function() {
-
-			audioUnlocked = true;
-		});
-}
-
-
-document.addEventListener(
-	"click",
-	unlockAudio,
-	{ once: true }
-);
-
-
-document.addEventListener(
-	"touchstart",
-	unlockAudio,
-	{ once: true }
-);
 
 
 function playRandomPaddleSound() {
@@ -134,192 +119,281 @@ function playRandomPaddleSound() {
 paddleLeft.body.style.top =
 	paddleLeft.y + "vh";
 
-paddleLeft.body.style.left =
-	"0";
-
 
 paddleRight.body.style.top =
 	paddleRight.y + "vh";
 
-paddleRight.body.style.right =
-	"0";
 
-
-// INPUT VARIABLES
+// DESKTOP KEYBOARD INPUT
 
 let upPressed = false;
+
 let downPressed = false;
 
 let rightUpPressed = false;
+
 let rightDownPressed = false;
 
 
-// DESKTOP KEYBOARD CONTROLS
+document.addEventListener(
+	"keydown",
+	function(event) {
 
-document.addEventListener("keydown", function(event) {
+		if (event.key === "w") {
 
-	if (event.key === "w") {
-		upPressed = true;
+			upPressed = true;
+		}
+
+
+		if (event.key === "s") {
+
+			downPressed = true;
+		}
+
+
+		if (event.key === "ArrowUp") {
+
+			rightUpPressed = true;
+
+			event.preventDefault();
+		}
+
+
+		if (event.key === "ArrowDown") {
+
+			rightDownPressed = true;
+
+			event.preventDefault();
+		}
 	}
+);
 
 
-	if (event.key === "s") {
-		downPressed = true;
+document.addEventListener(
+	"keyup",
+	function(event) {
+
+		if (event.key === "w") {
+
+			upPressed = false;
+		}
+
+
+		if (event.key === "s") {
+
+			downPressed = false;
+		}
+
+
+		if (event.key === "ArrowUp") {
+
+			rightUpPressed = false;
+		}
+
+
+		if (event.key === "ArrowDown") {
+
+			rightDownPressed = false;
+		}
 	}
+);
 
 
-	if (event.key === "ArrowUp") {
-
-		rightUpPressed = true;
-
-		event.preventDefault();
-	}
+// DRAGGING
 
 
-	if (event.key === "ArrowDown") {
-
-		rightDownPressed = true;
-
-		event.preventDefault();
-	}
-});
-
-
-document.addEventListener("keyup", function(event) {
-
-	if (event.key === "w") {
-		upPressed = false;
-	}
-
-
-	if (event.key === "s") {
-		downPressed = false;
-	}
-
-
-	if (event.key === "ArrowUp") {
-		rightUpPressed = false;
-	}
-
-
-	if (event.key === "ArrowDown") {
-		rightDownPressed = false;
-	}
-});
-
-
-// MOBILE TOUCH CONTROLS
-
-let leftUp =
-	document.getElementById("leftUp");
-
-let leftDown =
-	document.getElementById("leftDown");
-
-let rightUp =
-	document.getElementById("rightUp");
-
-let rightDown =
-	document.getElementById("rightDown");
-
-
-function addTouchControl(
-	element,
-	startFunction,
-	endFunction
+function startDragging(
+	paddle,
+	event
 ) {
 
-	element.addEventListener(
-		"touchstart",
+	event.preventDefault();
 
-		function(event) {
 
-			event.preventDefault();
+	paddle.pointerId =
+		event.pointerId;
 
-			startFunction();
-		},
 
-		{ passive: false }
+	paddle.body.setPointerCapture(
+		event.pointerId
 	);
 
 
-	element.addEventListener(
-		"touchend",
-
-		function(event) {
-
-			event.preventDefault();
-
-			endFunction();
-		},
-
-		{ passive: false }
-	);
-
-
-	element.addEventListener(
-		"touchcancel",
-
-		function() {
-
-			endFunction();
-		}
+	moveDraggedPaddle(
+		paddle,
+		event
 	);
 }
 
 
-addTouchControl(
+function moveDraggedPaddle(
+	paddle,
+	event
+) {
 
-	leftUp,
+	if (
+		event.pointerId !==
+		paddle.pointerId
+	) {
 
-	function() {
-		upPressed = true;
-	},
+		return;
+	}
 
-	function() {
-		upPressed = false;
+
+	let pointerY =
+		(event.clientY /
+		window.innerHeight) *
+		100;
+
+
+	// CENTER PADDLE ON FINGER
+
+	paddle.y =
+		pointerY -
+		paddle.height / 2;
+
+
+	// TOP BOUNDARY
+
+	if (paddle.y < 0) {
+
+		paddle.y = 0;
+	}
+
+
+	// BOTTOM BOUNDARY
+
+	if (
+		paddle.y +
+		paddle.height >
+		100
+	) {
+
+		paddle.y =
+			100 -
+			paddle.height;
+	}
+
+
+	paddle.body.style.top =
+		paddle.y + "vh";
+}
+
+
+function stopDragging(
+	paddle,
+	event
+) {
+
+	if (
+		event.pointerId !==
+		paddle.pointerId
+	) {
+
+		return;
+	}
+
+
+	paddle.pointerId = null;
+}
+
+
+// LEFT PADDLE DRAGGING
+
+paddleLeft.body.addEventListener(
+	"pointerdown",
+	function(event) {
+
+		startDragging(
+			paddleLeft,
+			event
+		);
 	}
 );
 
 
-addTouchControl(
+paddleLeft.body.addEventListener(
+	"pointermove",
+	function(event) {
 
-	leftDown,
-
-	function() {
-		downPressed = true;
-	},
-
-	function() {
-		downPressed = false;
+		moveDraggedPaddle(
+			paddleLeft,
+			event
+		);
 	}
 );
 
 
-addTouchControl(
+paddleLeft.body.addEventListener(
+	"pointerup",
+	function(event) {
 
-	rightUp,
-
-	function() {
-		rightUpPressed = true;
-	},
-
-	function() {
-		rightUpPressed = false;
+		stopDragging(
+			paddleLeft,
+			event
+		);
 	}
 );
 
 
-addTouchControl(
+paddleLeft.body.addEventListener(
+	"pointercancel",
+	function(event) {
 
-	rightDown,
+		stopDragging(
+			paddleLeft,
+			event
+		);
+	}
+);
 
-	function() {
-		rightDownPressed = true;
-	},
 
-	function() {
-		rightDownPressed = false;
+// RIGHT PADDLE DRAGGING
+
+paddleRight.body.addEventListener(
+	"pointerdown",
+	function(event) {
+
+		startDragging(
+			paddleRight,
+			event
+		);
+	}
+);
+
+
+paddleRight.body.addEventListener(
+	"pointermove",
+	function(event) {
+
+		moveDraggedPaddle(
+			paddleRight,
+			event
+		);
+	}
+);
+
+
+paddleRight.body.addEventListener(
+	"pointerup",
+	function(event) {
+
+		stopDragging(
+			paddleRight,
+			event
+		);
+	}
+);
+
+
+paddleRight.body.addEventListener(
+	"pointercancel",
+	function(event) {
+
+		stopDragging(
+			paddleRight,
+			event
+		);
 	}
 );
 
@@ -331,58 +405,79 @@ function isTouching(a, b) {
 	let aRect =
 		a.body.getBoundingClientRect();
 
+
 	let bRect =
 		b.body.getBoundingClientRect();
 
 
 	return (
+
 		aRect.right >= bRect.left &&
+
 		aRect.left <= bRect.right &&
+
 		aRect.bottom >= bRect.top &&
+
 		aRect.top <= bRect.bottom
 	);
 }
 
 
-// PADDLE MOVEMENT
+// DESKTOP PADDLE MOVEMENT
 
 function movePaddles() {
 
-	if (upPressed) {
+	// Don't use keyboard movement
+	// while that paddle is being dragged
 
-		paddleLeft.y -=
-			paddleLeft.speed;
+
+	if (
+		paddleLeft.pointerId === null
+	) {
+
+		if (upPressed) {
+
+			paddleLeft.y -=
+				paddleLeft.speed;
+		}
+
+
+		if (downPressed) {
+
+			paddleLeft.y +=
+				paddleLeft.speed;
+		}
 	}
 
 
-	if (downPressed) {
+	if (
+		paddleRight.pointerId === null
+	) {
 
-		paddleLeft.y +=
-			paddleLeft.speed;
+		if (rightUpPressed) {
+
+			paddleRight.y -=
+				paddleRight.speed;
+		}
+
+
+		if (rightDownPressed) {
+
+			paddleRight.y +=
+				paddleRight.speed;
+		}
 	}
 
 
-	if (rightUpPressed) {
-
-		paddleRight.y -=
-			paddleRight.speed;
-	}
-
-
-	if (rightDownPressed) {
-
-		paddleRight.y +=
-			paddleRight.speed;
-	}
-
-
-	// LEFT BOUNDARIES
+	// LEFT TOP LIMIT
 
 	if (paddleLeft.y < 0) {
 
 		paddleLeft.y = 0;
 	}
 
+
+	// LEFT BOTTOM LIMIT
 
 	if (
 		paddleLeft.y +
@@ -396,13 +491,15 @@ function movePaddles() {
 	}
 
 
-	// RIGHT BOUNDARIES
+	// RIGHT TOP LIMIT
 
 	if (paddleRight.y < 0) {
 
 		paddleRight.y = 0;
 	}
 
+
+	// RIGHT BOTTOM LIMIT
 
 	if (
 		paddleRight.y +
@@ -425,12 +522,13 @@ function movePaddles() {
 }
 
 
-// UPDATE BALL POSITION
+// BALL POSITION
 
 function updateBallPosition() {
 
 	ball.body.style.left =
 		ball.x + "vw";
+
 
 	ball.body.style.top =
 		ball.y + "vh";
@@ -442,13 +540,17 @@ function updateBallPosition() {
 function moveBall() {
 
 	if (!roundActive) {
+
 		return;
 	}
 
 
-	ball.x += ball.speedX;
+	ball.x +=
+		ball.speedX;
 
-	ball.y += ball.speedY;
+
+	ball.y +=
+		ball.speedY;
 
 
 	let ballRect =
@@ -461,7 +563,7 @@ function moveBall() {
 		100;
 
 
-	// TOP WALL
+	// TOP
 
 	if (ball.y <= 0) {
 
@@ -471,7 +573,7 @@ function moveBall() {
 	}
 
 
-	// BOTTOM WALL
+	// BOTTOM
 
 	if (
 		ball.y +
@@ -482,6 +584,7 @@ function moveBall() {
 		ball.y =
 			100 -
 			ballHeightVH;
+
 
 		ball.speedY *= -1;
 	}
@@ -531,11 +634,13 @@ function bounceOffPaddle(paddle) {
 
 
 	let paddleRect =
-		paddle.body.getBoundingClientRect();
+		paddle.body
+		.getBoundingClientRect();
 
 
 	let ballRect =
-		ball.body.getBoundingClientRect();
+		ball.body
+		.getBoundingClientRect();
 
 
 	let paddleCenter =
@@ -569,13 +674,13 @@ function bounceOffPaddle(paddle) {
 	ball.speedX *= -1;
 
 
-	// CHANGE ANGLE BASED ON HIT LOCATION
+	// ANGLE DEPENDS ON HIT LOCATION
 
 	ball.speedY =
 		hitPosition * 0.65;
 
 
-	// SPEED UP SLIGHTLY
+	// SPEED UP AFTER HIT
 
 	if (
 		Math.abs(ball.speedX) <
@@ -587,11 +692,12 @@ function bounceOffPaddle(paddle) {
 }
 
 
-// CHECK COLLISIONS
+// COLLISION CHECK
 
 function checkCollisions() {
 
 	if (!roundActive) {
+
 		return;
 	}
 
@@ -675,12 +781,14 @@ function checkCollisions() {
 function checkScore() {
 
 	if (!roundActive) {
+
 		return;
 	}
 
 
 	let ballRect =
-		ball.body.getBoundingClientRect();
+		ball.body
+		.getBoundingClientRect();
 
 
 	// RIGHT PLAYER SCORES
@@ -721,7 +829,7 @@ function checkScore() {
 }
 
 
-// ROUND COUNTDOWN
+// NEXT ROUND
 
 function startNextRound(direction) {
 
@@ -744,38 +852,50 @@ function startNextRound(direction) {
 
 
 	let timer =
-		setInterval(function() {
+		setInterval(
+			function() {
 
-			countdown--;
-
-
-			if (countdown > 0) {
-
-				countdownText.textContent =
-					countdown;
-			}
+				countdown--;
 
 
-			else if (countdown === 0) {
+				if (
+					countdown > 0
+				) {
 
-				countdownText.textContent =
-					"GO!";
-			}
-
-
-			else {
-
-				clearInterval(timer);
+					countdownText.textContent =
+						countdown;
+				}
 
 
-				countdownText.textContent =
-					"";
+				else if (
+					countdown === 0
+				) {
+
+					countdownText.textContent =
+						"GO!";
+				}
 
 
-				startBall(direction);
-			}
+				else {
 
-		}, 1000);
+					clearInterval(
+						timer
+					);
+
+
+					countdownText.textContent =
+						"";
+
+
+					startBall(
+						direction
+					);
+				}
+
+			},
+
+			1000
+		);
 }
 
 
@@ -797,11 +917,10 @@ function startBall(direction) {
 }
 
 
-// HANDLE SCREEN ROTATION / RESIZE
+// SCREEN RESIZE / ROTATION
 
 window.addEventListener(
 	"resize",
-
 	function() {
 
 		if (!roundActive) {
@@ -814,17 +933,21 @@ window.addEventListener(
 
 // GAME LOOP
 
-setInterval(function() {
+setInterval(
+	function() {
 
-	movePaddles();
+		movePaddles();
 
-	moveBall();
+		moveBall();
 
-	checkCollisions();
+		checkCollisions();
 
-	checkScore();
+		checkScore();
 
-}, 10);
+	},
+
+	10
+);
 
 
 // START GAME
