@@ -1,0 +1,229 @@
+:root {
+	--background: #171A1F;
+	--text: #F5EBDD;
+	--accent: #D94F4F;
+}
+
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+
+	width: 100%;
+	height: 100%;
+
+	background-color: var(--background);
+
+	overflow: hidden;
+
+	touch-action: none;
+	overscroll-behavior: none;
+}
+
+
+body {
+	position: relative;
+
+	font-family: Arial, sans-serif;
+
+	user-select: none;
+}
+
+
+/* SCOREBOARD */
+
+#scoreboard {
+	position: absolute;
+
+	top: 2vh;
+	left: 50%;
+
+	transform: translateX(-50%);
+
+	color: var(--text);
+
+	font-size: 7vh;
+	font-weight: bold;
+
+	z-index: 20;
+
+	pointer-events: none;
+}
+
+
+#scoreDivider {
+	margin-left: 2vh;
+	margin-right: 2vh;
+
+	color: var(--accent);
+}
+
+
+/* COUNTDOWN */
+
+#countdown {
+	position: absolute;
+
+	top: 50%;
+	left: 50%;
+
+	transform: translate(-50%, -50%);
+
+	color: var(--text);
+
+	font-size: 15vh;
+	font-weight: bold;
+
+	z-index: 30;
+
+	pointer-events: none;
+}
+
+
+/* PADDLES */
+
+.paddle {
+	position: absolute;
+
+	width: 10vh;
+	height: 26vh;
+
+	overflow: visible;
+
+	z-index: 10;
+}
+
+
+#left {
+	left: 0;
+}
+
+
+#right {
+	right: 0;
+}
+
+
+/* CHICKEN IMAGE */
+
+.chicken {
+	position: absolute;
+
+	height: 30vh;
+	width: auto;
+
+	top: 50%;
+	left: 50%;
+
+	transform: translate(-50%, -50%);
+
+	pointer-events: none;
+
+	user-select: none;
+
+	-webkit-user-drag: none;
+}
+
+
+/* BALL */
+
+#ball {
+	position: absolute;
+
+	height: 20vh;
+	width: 20vh;
+
+	pointer-events: none;
+
+	user-select: none;
+
+	-webkit-user-drag: none;
+
+	z-index: 5;
+}
+
+
+/* MOBILE TOUCH CONTROLS */
+
+.touchZone {
+	position: fixed;
+
+	width: 25vw;
+	height: 50vh;
+
+	z-index: 50;
+
+	touch-action: none;
+
+	display: none;
+}
+
+
+#leftUp {
+	left: 0;
+	top: 0;
+}
+
+
+#leftDown {
+	left: 0;
+	bottom: 0;
+}
+
+
+#rightUp {
+	right: 0;
+	top: 0;
+}
+
+
+#rightDown {
+	right: 0;
+	bottom: 0;
+}
+
+
+.touchLabel {
+	position: absolute;
+
+	left: 50%;
+
+	transform: translateX(-50%);
+
+	color: rgba(255, 255, 255, 0.18);
+
+	font-size: 8vh;
+
+	pointer-events: none;
+}
+
+
+#leftUp .touchLabel,
+#rightUp .touchLabel {
+	top: 10vh;
+}
+
+
+#leftDown .touchLabel,
+#rightDown .touchLabel {
+	bottom: 10vh;
+}
+
+
+/* ONLY SHOW TOUCH CONTROLS ON TOUCH DEVICES */
+
+@media (hover: none) and (pointer: coarse) {
+
+	.touchZone {
+		display: block;
+	}
+
+	#scoreboard {
+		font-size: 6vh;
+	}
+
+	#countdown {
+		font-size: 13vh;
+	}
+}
