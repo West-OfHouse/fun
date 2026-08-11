@@ -1,9 +1,9 @@
 const game = document.body;
 
 
-// ----------------------------
-// OBJECTS
-// ----------------------------
+// --------------------------------
+// PADDLES
+// --------------------------------
 
 let paddleLeft = {
 
@@ -29,6 +29,10 @@ let paddleRight = {
 };
 
 
+// --------------------------------
+// BALL
+// --------------------------------
+
 let ball = {
 
 	body: document.getElementById("ball"),
@@ -47,9 +51,9 @@ let ball = {
 };
 
 
-// ----------------------------
+// --------------------------------
 // SCORE
-// ----------------------------
+// --------------------------------
 
 let leftScore = 0;
 
@@ -68,18 +72,18 @@ const countdownText =
 	document.getElementById("countdown");
 
 
-// ----------------------------
+// --------------------------------
 // GAME STATE
-// ----------------------------
+// --------------------------------
 
 let roundActive = false;
 
 let countdownTimer = null;
 
 
-// ----------------------------
+// --------------------------------
 // AUDIO
-// ----------------------------
+// --------------------------------
 
 const paddleSounds = [
 
@@ -121,9 +125,9 @@ function playRandomPaddleSound() {
 }
 
 
-// ----------------------------
-// HELPERS
-// ----------------------------
+// --------------------------------
+// GAME SIZE FUNCTIONS
+// --------------------------------
 
 function getGameRect() {
 
@@ -137,12 +141,12 @@ function getHeightPercent(element) {
 		getGameRect();
 
 
-	let rect =
+	let elementRect =
 		element.getBoundingClientRect();
 
 
 	return (
-		rect.height /
+		elementRect.height /
 		gameRect.height
 	) * 100;
 }
@@ -154,20 +158,20 @@ function getWidthPercent(element) {
 		getGameRect();
 
 
-	let rect =
+	let elementRect =
 		element.getBoundingClientRect();
 
 
 	return (
-		rect.width /
+		elementRect.width /
 		gameRect.width
 	) * 100;
 }
 
 
-// ----------------------------
+// --------------------------------
 // PADDLE POSITION
-// ----------------------------
+// --------------------------------
 
 function updatePaddlePosition(paddle) {
 
@@ -208,19 +212,9 @@ function clampPaddle(paddle) {
 }
 
 
-updatePaddlePosition(
-	paddleLeft
-);
-
-
-updatePaddlePosition(
-	paddleRight
-);
-
-
-// ----------------------------
-// KEYBOARD CONTROLS
-// ----------------------------
+// --------------------------------
+// DESKTOP KEYBOARD
+// --------------------------------
 
 let upPressed = false;
 
@@ -233,6 +227,7 @@ let rightDownPressed = false;
 
 document.addEventListener(
 	"keydown",
+
 	function(event) {
 
 		if (event.key === "w") {
@@ -267,6 +262,7 @@ document.addEventListener(
 
 document.addEventListener(
 	"keyup",
+
 	function(event) {
 
 		if (event.key === "w") {
@@ -295,9 +291,9 @@ document.addEventListener(
 );
 
 
-// ----------------------------
-// MOBILE / MOUSE DRAGGING
-// ----------------------------
+// --------------------------------
+// DRAGGING
+// --------------------------------
 
 function startDragging(
 	paddle,
@@ -329,8 +325,8 @@ function moveDraggedPaddle(
 ) {
 
 	if (
-		paddle.pointerId !==
-		event.pointerId
+		event.pointerId !==
+		paddle.pointerId
 	) {
 
 		return;
@@ -372,23 +368,23 @@ function stopDragging(
 ) {
 
 	if (
-		paddle.pointerId !==
-		event.pointerId
+		event.pointerId !==
+		paddle.pointerId
 	) {
 
 		return;
 	}
 
 
-	paddle.pointerId =
-		null;
+	paddle.pointerId = null;
 }
 
 
-// LEFT DRAG
+// LEFT PADDLE
 
 paddleLeft.body.addEventListener(
 	"pointerdown",
+
 	function(event) {
 
 		startDragging(
@@ -401,6 +397,7 @@ paddleLeft.body.addEventListener(
 
 paddleLeft.body.addEventListener(
 	"pointermove",
+
 	function(event) {
 
 		moveDraggedPaddle(
@@ -413,6 +410,7 @@ paddleLeft.body.addEventListener(
 
 paddleLeft.body.addEventListener(
 	"pointerup",
+
 	function(event) {
 
 		stopDragging(
@@ -425,6 +423,7 @@ paddleLeft.body.addEventListener(
 
 paddleLeft.body.addEventListener(
 	"pointercancel",
+
 	function(event) {
 
 		stopDragging(
@@ -435,10 +434,11 @@ paddleLeft.body.addEventListener(
 );
 
 
-// RIGHT DRAG
+// RIGHT PADDLE
 
 paddleRight.body.addEventListener(
 	"pointerdown",
+
 	function(event) {
 
 		startDragging(
@@ -451,6 +451,7 @@ paddleRight.body.addEventListener(
 
 paddleRight.body.addEventListener(
 	"pointermove",
+
 	function(event) {
 
 		moveDraggedPaddle(
@@ -463,6 +464,7 @@ paddleRight.body.addEventListener(
 
 paddleRight.body.addEventListener(
 	"pointerup",
+
 	function(event) {
 
 		stopDragging(
@@ -475,6 +477,7 @@ paddleRight.body.addEventListener(
 
 paddleRight.body.addEventListener(
 	"pointercancel",
+
 	function(event) {
 
 		stopDragging(
@@ -485,9 +488,9 @@ paddleRight.body.addEventListener(
 );
 
 
-// ----------------------------
+// --------------------------------
 // KEYBOARD PADDLE MOVEMENT
-// ----------------------------
+// --------------------------------
 
 function movePaddles() {
 
@@ -540,9 +543,9 @@ function movePaddles() {
 }
 
 
-// ----------------------------
+// --------------------------------
 // COLLISION
-// ----------------------------
+// --------------------------------
 
 function isTouching(a, b) {
 
@@ -556,24 +559,20 @@ function isTouching(a, b) {
 
 	return (
 
-		aRect.right >=
-		bRect.left &&
+		aRect.right >= bRect.left &&
 
-		aRect.left <=
-		bRect.right &&
+		aRect.left <= bRect.right &&
 
-		aRect.bottom >=
-		bRect.top &&
+		aRect.bottom >= bRect.top &&
 
-		aRect.top <=
-		bRect.bottom
+		aRect.top <= bRect.bottom
 	);
 }
 
 
-// ----------------------------
+// --------------------------------
 // BALL POSITION
-// ----------------------------
+// --------------------------------
 
 function updateBallPosition() {
 
@@ -586,9 +585,9 @@ function updateBallPosition() {
 }
 
 
-// ----------------------------
+// --------------------------------
 // CENTER BALL
-// ----------------------------
+// --------------------------------
 
 function centerBall() {
 
@@ -616,9 +615,9 @@ function centerBall() {
 }
 
 
-// ----------------------------
+// --------------------------------
 // BALL MOVEMENT
-// ----------------------------
+// --------------------------------
 
 function moveBall() {
 
@@ -673,9 +672,9 @@ function moveBall() {
 }
 
 
-// ----------------------------
+// --------------------------------
 // PADDLE BOUNCE
-// ----------------------------
+// --------------------------------
 
 function bounceOffPaddle(
 	paddle
@@ -725,19 +724,19 @@ function bounceOffPaddle(
 		);
 
 
-	// REVERSE HORIZONTAL DIRECTION
+	// REVERSE BALL
 
 	ball.speedX *= -1;
 
 
-	// ANGLE BASED ON WHERE BALL HIT
+	// CHANGE ANGLE
 
 	ball.speedY =
 		hitPosition *
 		0.65;
 
 
-	// SPEED UP SLIGHTLY
+	// SPEED UP
 
 	if (
 		Math.abs(
@@ -752,9 +751,9 @@ function bounceOffPaddle(
 }
 
 
-// ----------------------------
-// COLLISION HANDLING
-// ----------------------------
+// --------------------------------
+// COLLISION CHECK
+// --------------------------------
 
 function checkCollisions() {
 
@@ -768,7 +767,7 @@ function checkCollisions() {
 		getGameRect();
 
 
-	// LEFT PADDLE
+	// LEFT
 
 	if (
 		ball.speedX < 0 &&
@@ -802,7 +801,7 @@ function checkCollisions() {
 	}
 
 
-	// RIGHT PADDLE
+	// RIGHT
 
 	if (
 		ball.speedX > 0 &&
@@ -845,9 +844,9 @@ function checkCollisions() {
 }
 
 
-// ----------------------------
+// --------------------------------
 // SCORE
-// ----------------------------
+// --------------------------------
 
 function checkScore() {
 
@@ -866,7 +865,7 @@ function checkScore() {
 		.getBoundingClientRect();
 
 
-	// RIGHT PLAYER SCORES
+	// RIGHT SCORES
 
 	if (
 		ballRect.left <=
@@ -889,7 +888,7 @@ function checkScore() {
 	}
 
 
-	// LEFT PLAYER SCORES
+	// LEFT SCORES
 
 	if (
 		ballRect.right >=
@@ -913,9 +912,9 @@ function checkScore() {
 }
 
 
-// ----------------------------
-// NEXT ROUND
-// ----------------------------
+// --------------------------------
+// ROUND COUNTDOWN
+// --------------------------------
 
 function startNextRound(
 	direction
@@ -933,8 +932,7 @@ function startNextRound(
 
 
 	if (
-		countdownTimer !==
-		null
+		countdownTimer !== null
 	) {
 
 		clearInterval(
@@ -1002,9 +1000,9 @@ function startNextRound(
 }
 
 
-// ----------------------------
+// --------------------------------
 // START BALL
-// ----------------------------
+// --------------------------------
 
 function startBall(
 	direction
@@ -1022,14 +1020,13 @@ function startBall(
 		) * 0.5;
 
 
-	roundActive =
-		true;
+	roundActive = true;
 }
 
 
-// ----------------------------
-// SCREEN RESIZE / ROTATION
-// ----------------------------
+// --------------------------------
+// RESIZING
+// --------------------------------
 
 function resizeGame() {
 
@@ -1064,6 +1061,7 @@ window.addEventListener(
 
 window.addEventListener(
 	"orientationchange",
+
 	function() {
 
 		setTimeout(
@@ -1074,10 +1072,11 @@ window.addEventListener(
 );
 
 
-// PREVENT LONG-PRESS MENU
+// STOP LONG PRESS MENU
 
 document.addEventListener(
 	"contextmenu",
+
 	function(event) {
 
 		event.preventDefault();
@@ -1085,9 +1084,9 @@ document.addEventListener(
 );
 
 
-// ----------------------------
+// --------------------------------
 // GAME LOOP
-// ----------------------------
+// --------------------------------
 
 setInterval(
 	function() {
@@ -1106,12 +1105,22 @@ setInterval(
 );
 
 
-// ----------------------------
-// START
-// ----------------------------
+// --------------------------------
+// START GAME
+// --------------------------------
 
 requestAnimationFrame(
 	function() {
+
+		updatePaddlePosition(
+			paddleLeft
+		);
+
+
+		updatePaddlePosition(
+			paddleRight
+		);
+
 
 		centerBall();
 
