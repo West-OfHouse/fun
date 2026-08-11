@@ -1,12 +1,20 @@
 :root {
+
 	--background: #171A1F;
+
 	--text: #F5EBDD;
+
 	--accent: #D94F4F;
 }
 
 
-html,
-body {
+* {
+	box-sizing: border-box;
+}
+
+
+html {
+
 	margin: 0;
 	padding: 0;
 
@@ -18,21 +26,222 @@ body {
 	background-color: var(--background);
 
 	touch-action: none;
+
 	overscroll-behavior: none;
 }
 
 
 body {
+
 	position: relative;
 
+	margin: 0;
+	padding: 0;
+
 	width: 100vw;
+
+	height: 100vh;
 	height: 100dvh;
 
-	min-height: 100dvh;
-	max-height: 100dvh;
+	overflow: hidden;
+
+	background-color: var(--background);
 
 	font-family: Arial, sans-serif;
 
+	touch-action: none;
+
+	overscroll-behavior: none;
+
 	user-select: none;
 	-webkit-user-select: none;
+}
+
+
+/* SCOREBOARD */
+
+#scoreboard {
+
+	position: absolute;
+
+	top: 2%;
+
+	left: 50%;
+
+	transform: translateX(-50%);
+
+	color: var(--text);
+
+	font-size: clamp(32px, 7dvh, 80px);
+
+	font-weight: bold;
+
+	z-index: 50;
+
+	pointer-events: none;
+}
+
+
+#scoreDivider {
+
+	margin-left: 2vw;
+	margin-right: 2vw;
+
+	color: var(--accent);
+}
+
+
+/* COUNTDOWN */
+
+#countdown {
+
+	position: absolute;
+
+	top: 50%;
+
+	left: 50%;
+
+	transform: translate(-50%, -50%);
+
+	color: var(--text);
+
+	font-size: clamp(60px, 15dvh, 170px);
+
+	font-weight: bold;
+
+	z-index: 60;
+
+	pointer-events: none;
+}
+
+
+/* PADDLE COLLISION BOX */
+
+.paddle {
+
+	position: absolute;
+
+	top: 37%;
+
+	width: 10dvh;
+
+	height: 26%;
+
+	z-index: 20;
+
+	overflow: visible;
+
+	touch-action: none;
+
+	cursor: grab;
+}
+
+
+.paddle:active {
+
+	cursor: grabbing;
+}
+
+
+#left {
+
+	left: 0;
+}
+
+
+#right {
+
+	right: 0;
+}
+
+
+/* CHICKEN IMAGE */
+
+.chicken {
+
+	position: absolute;
+
+	top: 50%;
+
+	left: 50%;
+
+	height: 115%;
+
+	width: auto;
+
+	transform: translate(-50%, -50%);
+
+	pointer-events: none;
+
+	user-select: none;
+	-webkit-user-select: none;
+
+	-webkit-user-drag: none;
+}
+
+
+/* BALL */
+
+#ball {
+
+	position: absolute;
+
+	height: 20%;
+
+	width: auto;
+
+	aspect-ratio: 1 / 1;
+
+	z-index: 10;
+
+	pointer-events: none;
+
+	user-select: none;
+	-webkit-user-select: none;
+
+	-webkit-user-drag: none;
+}
+
+
+/* PHONE / TABLET */
+
+@media (hover: none) and (pointer: coarse) {
+
+	.paddle {
+
+		width: 11dvh;
+
+		cursor: default;
+	}
+
+
+	#scoreboard {
+
+		font-size: clamp(28px, 6dvh, 65px);
+	}
+
+
+	#countdown {
+
+		font-size: clamp(55px, 13dvh, 130px);
+	}
+}
+
+
+/* PORTRAIT PHONE */
+
+@media (orientation: portrait) {
+
+	.paddle {
+
+		width: 9vw;
+
+		height: 22%;
+	}
+
+
+	#ball {
+
+		height: 13%;
+	}
 }
